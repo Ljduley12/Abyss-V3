@@ -7,5 +7,6 @@ staticDirs:
   - static
 # Service configuration
 services:
-  - name: AbyssV3
+  - type: web
+    name: AbyssV3
     startupCommand: npm start
