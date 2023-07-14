@@ -8,8 +8,5 @@
     "build": "npm i"
   },
   "addons": [],
-  "buildpacks": [],
-  "env": {
-    "ENV_VARIABLE": "value"
-  }
+  "buildpacks": []
 }
