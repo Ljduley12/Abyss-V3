@@ -1,12 +1,1 @@
-# render.yaml
-# Configuration for your Render service
-# Build command and environment
-buildCommand: npm i
-# Static assets configuration
-staticDirs:
-  - static
-# Service configuration
-services:
-  - type: web
-    name: AbyssV3
-    startupCommand: npm start
+
