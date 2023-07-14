@@ -130,7 +130,7 @@ body, ::backdrop {
   -moz-box-sizing: border-box;
   -webkit-box-sizing: border-box;
   height: 44px;
-  width: 116px;
+  width: 196px;
   background-color: var(--tabColor);
   margin-top: 5.5px;
   margin-right: 10px;
@@ -139,6 +139,17 @@ body, ::backdrop {
   display:inline-block;
   cursor: pointer;
   transition: 0.2s;
+}
+
+.tabButton img {
+  height: 30px;
+  width: 30px;
+  position: relative;
+  top: 45%;
+  transform: translateY(-50%);
+  left: 5px;
+  display: inline-block;
+  cursor: pointer;
 }
 
 .tabButton:hover {

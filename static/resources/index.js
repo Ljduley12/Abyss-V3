@@ -1,8 +1,9 @@
 let workerLoaded;
 
 document.body.onerror = function (message, source, lineno, colno, error) {
-  alert(`Error: ${message}\nSource: ${source}\nLine: ${lineno}`);
+  alert(`DEV: Error: ${message}\nSource: ${source}\nLine: ${lineno}`);
 };
+
 
 if (localStorage.getItem("title") && localStorage.getItem("sc")) {
   document.title = localStorage.getItem("title");
@@ -64,7 +65,7 @@ async function runService(URL) {
   if (url.trim() == "") {
     return;
   }
-  console.log("Running service: " + url)
+  console.log("%cDEV:%c Running service: %c" + url, "font-weight: bold", "font-weight: normal", "font-weight: normal");
   if (abt != null) {
     abt.remove();
     abt = null;
@@ -76,6 +77,7 @@ async function runService(URL) {
   if (/^(abyss:)(\/){0,2}([a-z]|\d)+$/.test(url.trim()) == true) {
     var path = url.trim().replace(/^(abyss:)\/*/, "");
     if (path == "about" || path == "") {
+      ts.getActiveTab().getConnectedElement().querySelector("svg").style.display = "initial";
       if (ts.getActiveTab() == null) {
         document.getElementById("adrbar").value = "";
         return;
@@ -96,6 +98,7 @@ async function runService(URL) {
       ts.getActiveTab().getTabElement().appendChild(abt);
       return;
     } else if (path == "newtab") {
+      ts.getActiveTab().getConnectedElement().querySelector("svg").style.display = "initial";
       if (ts.getActiveTab() == null) {
         document.getElementById("adrbar").value = "";
         return;
@@ -111,14 +114,17 @@ async function runService(URL) {
       document.getElementById("adrbar").value = "";
       return;
     } else if (path == "discord") {
+      ts.getActiveTab().getConnectedElement().querySelector("svg").style.display = "initial";
       window.open("https://discord.gg/goabyss");
       document.getElementById("adrbar").value = "";
       return;
     } else if (path == "github") { //dont change anything please just try to fix the error i dont want anything changed i am supposed to release soon
+      ts.getActiveTab().getConnectedElement().querySelector("svg").style.display = "initial";
       window.open("https://github.com/code-alt");
       document.getElementById("adrbar").value = "";
       return;
     } else if (path == "settings") {
+      ts.getActiveTab().getConnectedElement().querySelector("svg").style.display = "initial";
       if (ts.getActiveTab() == null) {
         document.getElementById("adrbar").value = "";
         return;
@@ -154,7 +160,7 @@ async function runService(URL) {
     ts.getActiveTab() != null &&
     ts.getActiveTab().findFirstIFrame() == null
   ) {
-    console.log("Connecting to service -> loading");
+    console.log("%cDEV:%c Connecting to service -> loading", "font-weight: bold", "font-weight: normal");
 
     if (typeof navigator.serviceWorker === "undefined")
       alert(
@@ -174,28 +180,29 @@ async function runService(URL) {
     iframe.style.borderRadius = "15px";
     if (fscr) iframe.style.borderRadius = "0";
     ts.getActiveTab().getTabElement().appendChild(iframe);
+    ts.getActiveTab().getConnectedElement().querySelector("svg").style.display = "none";
+    var img = document.createElement("img");
+    img.src = "https://t0.gstatic.com/faviconV2?client=SOCIAL&type=FAVICON&fallback_opts=TYPE,SIZE,URL&url="+url+"&size=64";
+    ts.getActiveTab().getConnectedElement().querySelector("svg").parentNode.appendChild(img);
+    fetch("/service/route?url=" + encodeURIComponent(url))
+        .then((res) => res.text())
+        .then((html) => {
+          var parser = new DOMParser();
+          var doc = parser.parseFromString(html, "text/html");
+          console.log("%cDEV:%c" + doc, "font-weight: bold", "font-weight: normal");
+          var title = doc.querySelector("title").innerText;
+          ts.getActiveTab().getConnectedElement().querySelector("svg").parentNode.parentNode.querySelector("label").innerText = title;
+        });
     document.getElementById("adrbar").value = "";
   } else if (
     ts.getActiveTab() != null &&
     ts.getActiveTab().findFirstIFrame() != null
   ) {
-    ts.getActiveTab().findFirstIFrame().src = url;
+    ts.getActiveTab().findFirstIFrame().src = "/service/route?url=" + encodeURIComponent(url);
     document.getElementById("adrbar").value = "";
   } else {
-    console.log("Connecting to service -> loading");
-
-    if (typeof navigator.serviceWorker === "undefined")
-      alert(
-        "An error occured registering your service worker. Please contact support - discord.gg/abyss"
-      );
-
-    if (!workerLoaded) await worker();
-    var win = window.open("about:blank", "_blank");
-    const frame = document.createElement("iframe");
-    frame.src = "/service/route?url=" + encodeURIComponent(url);
-    win.document.body.appendChild(frame);
-    ts.deleteTab(ts.getActiveTab(), true);
-    frame.style.cssText = "margin: 0; padding: 0; overflow: hidden; width: 100%; height: 100%; position: absolute; top: 0; left: 0; z-index: 1000000; border: none; border-radius: 0;";
+    ts.setActiveTab(ts.addTab(new Tab(ts.createTabBtn(), ts.createTabFrame())));
+    runService(url);
   }
 }
 
@@ -372,7 +379,7 @@ function getThemes() {
     .then((json) => {
       for (const themeName in json) {
         const theme = json[themeName];
-        console.log("Found " + themeName, theme.URL);
+        console.log("%cDEV:%c Found %c" + themeName + " %c" + theme.URL, "font-weight: bold", "font-weight: normal", "font-weight: bold", "font-weight: normal");
         x = new Theme(theme.URL, themeName)
         tHs.addTheme(x);
         addDropElem(themeName);
@@ -390,3 +397,60 @@ function themeSwitch(sel) {
 }
 
 document.addEventListener("fullscreenchange", handleFullscreenChange);
+
+function log() {
+  setTimeout(
+    console.log.bind(
+      console,
+      "%cAbyss Version 3",
+      "background: #6670FF;color:#FFF;padding:5px;border-radius: 5px;line-height: 26px; font-size:30px;"
+    )
+  );
+  setTimeout(
+    console.log.bind(
+      console,
+      "%cIf you are seeing this, the main script system has loaded.",
+      "background: #6670FF;color:#FFF;padding:5px;border-radius: 5px;line-height: 26px; font-size:24px;"
+    )
+  );
+  setTimeout(
+    console.log.bind(
+      console,
+      "%cIf you encounter an error, contact the development team on our discord. DM the info below.",
+      "background: #6670FF;color:#FFF;padding:5px;border-radius: 5px;line-height: 26px; font-size:16px;"
+    )
+  );
+  setTimeout(
+    console.log.bind(
+      console,
+      "%cDo not share output to anyone but trusted Abyss developers with a role in the server! Someone may steal your info.",
+      "background: #6670FF;color:#FFF;padding:5px;border-radius: 5px;line-height: 26px; font-size:16px;"
+    )
+  );
+  let online = navigator.onLine;
+  let userAgent = navigator.userAgent;
+  let browserName;
+  let diagnosticDomain = window.location.href;
+  if (userAgent.match(/chrome|chromium|crios/i)) {
+    browserName = "Chrome";
+  } else if (userAgent.match(/firefox|fxios/i)) {
+    browserName = "Firefox";
+  } else if (userAgent.match(/safari/i)) {
+    browserName = "Safari";
+  } else if (userAgent.match(/opr\//i)) {
+    browserName = "Opera";
+  } else if (userAgent.match(/edg/i)) {
+    browserName = "Edge";
+  } else {
+    browserName = "Browser not detected!";
+  }
+  setTimeout(
+    console.log.bind(
+      console,
+      `%c Information: \n Online: ${online} \n URL: ${diagnosticDomain} \n Browser: ${browserName} \n UA: ${userAgent}`, 
+      "background: grey;color:white;padding:5px;line-height: 26px; border-radius: 5px;font-size:12px;"
+    )
+  )
+
+}
+log();

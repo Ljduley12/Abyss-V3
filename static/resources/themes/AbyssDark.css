@@ -132,7 +132,7 @@ body, ::backdrop {
   -moz-box-sizing: border-box;
   -webkit-box-sizing: border-box;
   height: 44px;
-  width: 116px;
+  width: 196px;
   background-color: var(--tabColor);
   margin-top: 5.5px;
   margin-right: 10px;
