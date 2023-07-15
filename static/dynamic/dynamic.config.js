@@ -12,7 +12,7 @@ self.__dynamic$config = {
     path: '/bare/',
   },
   tab: {
-    title: 'Service',
+    title: null,
     icon: null,
     ua: null,
   },
