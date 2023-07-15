@@ -302,8 +302,8 @@ function back() {
       ts.getActiveTab().findFirstIFrame().contentWindow.history.back();
     var img = ts.getActiveTab().getConnectedElement().querySelector("img")
     var iframe = ts.getActiveTab().getTabElement().querySelector("#browseriframe");
-    ts.getActiveTab().getConnectedElement().querySelector("#newtitle").remove();
     function changeTitle() {
+      ts.getActiveTab().getConnectedElement().querySelector("#newtitle").remove();
       var title = document.createElement("label");
       title.id = "newtitle";
       var originalTitle = iframe.contentDocument.title;
@@ -323,8 +323,8 @@ function forwards() {
       ts.getActiveTab().findFirstIFrame().contentWindow.history.forward();
       var img = ts.getActiveTab().getConnectedElement().querySelector("img")
       var iframe = ts.getActiveTab().getTabElement().querySelector("#browseriframe");
-      ts.getActiveTab().getConnectedElement().querySelector("#newtitle").remove();
       function changeTitle() {
+        ts.getActiveTab().getConnectedElement().querySelector("#newtitle").remove();
         var title = document.createElement("label");
         title.id = "newtitle";
         var originalTitle = iframe.contentDocument.title;
@@ -342,19 +342,6 @@ function reload() {
   if (ts.getActiveTab() != null) {
     if (ts.getActiveTab().findFirstIFrame() != null) {
       ts.getActiveTab().findFirstIFrame().contentWindow.location.reload();
-      var img = ts.getActiveTab().getConnectedElement().querySelector("img")
-      var iframe = ts.getActiveTab().getTabElement().querySelector("#browseriframe");
-      ts.getActiveTab().getConnectedElement().querySelector("#newtitle").remove();
-      function changeTitle() {
-        var title = document.createElement("label");
-        title.id = "newtitle";
-        var originalTitle = iframe.contentDocument.title;
-        var truncatedTitle = originalTitle.length > 7 ? originalTitle.substring(0, 7) + "..." : originalTitle;
-        title.textContent = truncatedTitle;
-        ts.getActiveTab().getConnectedElement().querySelector("#original").parentNode.appendChild(title);
-        img.src = iframe.contentDocument.querySelector('link[rel="icon"]').href;
-      }
-      iframe.onload = changeTitle;
     }
   }
 }
