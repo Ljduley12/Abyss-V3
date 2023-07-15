@@ -170,6 +170,7 @@ async function runService(URL) {
     if (!workerLoaded) await worker();
     var iframe = document.createElement("iframe");
     iframe.src = "/service/route?url=" + encodeURIComponent(url);
+    iframe.id = "browseriframe";
     iframe.style.width = "100%";
     iframe.style.height = "100%";
     iframe.style.border = "none";
@@ -184,17 +185,16 @@ async function runService(URL) {
     var img = document.createElement("img");
     img.src = "https://t0.gstatic.com/faviconV2?client=SOCIAL&type=FAVICON&fallback_opts=TYPE,SIZE,URL&url="+url+"&size=64";
     ts.getActiveTab().getConnectedElement().querySelector("svg").parentNode.appendChild(img);
-    ts.getActiveTab().getConnectedElement().querySelector("label").style.display = "none";
+    ts.getActiveTab().getConnectedElement().querySelector("#original").style.display = "none";
     var title = document.createElement("label");
-    title.style.fontSize = "20px";
-    title.style.top = "-4px";
+    title.id = "newtitle";
     var iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
         iframe.contentWindow.onload = function(){
           var originalTitle = iframe.contentWindow.document.title;
           var truncatedTitle = originalTitle.length > 7 ? originalTitle.substring(0, 7) + "..." : originalTitle;
           title.textContent = truncatedTitle;
         };
-    ts.getActiveTab().getConnectedElement().querySelector("label").parentNode.appendChild(title);
+    ts.getActiveTab().getConnectedElement().querySelector("#original").parentNode.appendChild(title);
     fetch("/service/route?url=" + encodeURIComponent(url))
         .then((res) => res.text())
         .then((html) => {
@@ -211,7 +211,22 @@ async function runService(URL) {
   ) {
     ts.getActiveTab().findFirstIFrame().src = "/service/route?url=" + encodeURIComponent(url);
     document.getElementById("adrbar").value = "";
-  } else {
+
+    var img = ts.getActiveTab().getConnectedElement().querySelector("img")
+    img.src = "https://t0.gstatic.com/faviconV2?client=SOCIAL&type=FAVICON&fallback_opts=TYPE,SIZE,URL&url="+url+"&size=64";
+
+    ts.getActiveTab().getConnectedElement().querySelector("#newtitle").remove();
+    var iframe = ts.getActiveTab().getTabElement().querySelector("#browseriframe");
+    function changeTitle() {
+      var title = document.createElement("label");
+      title.id = "newtitle";
+      var originalTitle = iframe.contentDocument.title;
+      var truncatedTitle = originalTitle.length > 7 ? originalTitle.substring(0, 7) + "..." : originalTitle;
+      title.textContent = truncatedTitle;
+      ts.getActiveTab().getConnectedElement().querySelector("#original").parentNode.appendChild(title);
+    }
+    iframe.onload = changeTitle;
+    } else {
     ts.setActiveTab(ts.addTab(new Tab(ts.createTabBtn(), ts.createTabFrame())));
     runService(url);
   }
@@ -285,6 +300,19 @@ function back() {
   if (ts.getActiveTab() != null) {
     if (ts.getActiveTab().findFirstIFrame() != null) {
       ts.getActiveTab().findFirstIFrame().contentWindow.history.back();
+    var img = ts.getActiveTab().getConnectedElement().querySelector("img")
+    var iframe = ts.getActiveTab().getTabElement().querySelector("#browseriframe");
+    ts.getActiveTab().getConnectedElement().querySelector("#newtitle").remove();
+    function changeTitle() {
+      var title = document.createElement("label");
+      title.id = "newtitle";
+      var originalTitle = iframe.contentDocument.title;
+      var truncatedTitle = originalTitle.length > 7 ? originalTitle.substring(0, 7) + "..." : originalTitle;
+      title.textContent = truncatedTitle;
+      ts.getActiveTab().getConnectedElement().querySelector("#original").parentNode.appendChild(title);
+      img.src = iframe.contentDocument.querySelector('link[rel="icon"]').href;
+    }
+    iframe.onload = changeTitle;
     }
   }
 }
@@ -293,6 +321,19 @@ function forwards() {
   if (ts.getActiveTab() != null) {
     if (ts.getActiveTab().findFirstIFrame() != null) {
       ts.getActiveTab().findFirstIFrame().contentWindow.history.forward();
+      var img = ts.getActiveTab().getConnectedElement().querySelector("img")
+      var iframe = ts.getActiveTab().getTabElement().querySelector("#browseriframe");
+      ts.getActiveTab().getConnectedElement().querySelector("#newtitle").remove();
+      function changeTitle() {
+        var title = document.createElement("label");
+        title.id = "newtitle";
+        var originalTitle = iframe.contentDocument.title;
+        var truncatedTitle = originalTitle.length > 7 ? originalTitle.substring(0, 7) + "..." : originalTitle;
+        title.textContent = truncatedTitle;
+        ts.getActiveTab().getConnectedElement().querySelector("#original").parentNode.appendChild(title);
+        img.src = iframe.contentDocument.querySelector('link[rel="icon"]').href;
+      }
+      iframe.onload = changeTitle;
     }
   }
 }
@@ -301,6 +342,19 @@ function reload() {
   if (ts.getActiveTab() != null) {
     if (ts.getActiveTab().findFirstIFrame() != null) {
       ts.getActiveTab().findFirstIFrame().contentWindow.location.reload();
+      var img = ts.getActiveTab().getConnectedElement().querySelector("img")
+      var iframe = ts.getActiveTab().getTabElement().querySelector("#browseriframe");
+      ts.getActiveTab().getConnectedElement().querySelector("#newtitle").remove();
+      function changeTitle() {
+        var title = document.createElement("label");
+        title.id = "newtitle";
+        var originalTitle = iframe.contentDocument.title;
+        var truncatedTitle = originalTitle.length > 7 ? originalTitle.substring(0, 7) + "..." : originalTitle;
+        title.textContent = truncatedTitle;
+        ts.getActiveTab().getConnectedElement().querySelector("#original").parentNode.appendChild(title);
+        img.src = iframe.contentDocument.querySelector('link[rel="icon"]').href;
+      }
+      iframe.onload = changeTitle;
     }
   }
 }

@@ -165,6 +165,15 @@ body, ::backdrop {
   cursor: pointer;
 }
 
+.tabButton p {
+  font-size: 20px;
+  font-weight: bold;
+  position: relative;
+  top: -4px;
+  left: 20px;
+  cursor: pointer;
+}
+
 .tabButton .tabImage {
   height: 30px;
   width: 30px;
