@@ -148,10 +148,10 @@ body, ::backdrop {
 }
 
 .tabButton label {
-  font-size: 24px;
+  font-size: 20px;
   font-weight: bold;
   position: relative;
-  top: -2px;
+  top: -4px;
   left: 20px;
   cursor: pointer;
 }
