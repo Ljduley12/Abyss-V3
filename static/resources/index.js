@@ -186,24 +186,21 @@ async function runService(URL) {
     img.src = "https://t0.gstatic.com/faviconV2?client=SOCIAL&type=FAVICON&fallback_opts=TYPE,SIZE,URL&url="+url+"&size=64";
     ts.getActiveTab().getConnectedElement().querySelector("svg").parentNode.appendChild(img);
     ts.getActiveTab().getConnectedElement().querySelector("#original").style.display = "none";
-    var title = document.createElement("label");
-    title.id = "newtitle";
-    var iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
-        iframe.contentWindow.onload = function(){
-          var originalTitle = iframe.contentWindow.document.title;
-          var truncatedTitle = originalTitle.length > 7 ? originalTitle.substring(0, 7) + "..." : originalTitle;
+    ts.getActiveTab().findFirstIFrame().onload = () => {
+      var iframe = ts.getActiveTab().getTabElement().querySelector("#browseriframe");
+      var title = document.createElement("label");
+      title.id = "newtitle";
+      var originalTitle = iframe.contentDocument.title;
+      var truncatedTitle = originalTitle.length > 7 ? originalTitle.substring(0, 7) + "..." : originalTitle;
+      if (truncatedTitle == undefined || truncatedTitle == null || truncatedTitle == "" || truncatedTitle.trim() == "") {
+          title.textContent = "Untitled";
+      }
+      else {
           title.textContent = truncatedTitle;
-        };
+      }
+      ts.getActiveTab().getConnectedElement().querySelector("#original").parentNode.appendChild(title);
+    };
     ts.getActiveTab().getConnectedElement().querySelector("#original").parentNode.appendChild(title);
-    fetch("/service/route?url=" + encodeURIComponent(url))
-        .then((res) => res.text())
-        .then((html) => {
-          var parser = new DOMParser();
-          var doc = parser.parseFromString(html, "text/html");
-          console.log("%cDEV:%c" + doc, "font-weight: bold", "font-weight: normal");
-          ts.getActiveTab().getConnectedElement().querySelector("svg");
-        });
-
     document.getElementById("adrbar").value = "";
   } else if (
     ts.getActiveTab() != null &&
@@ -214,18 +211,21 @@ async function runService(URL) {
 
     var img = ts.getActiveTab().getConnectedElement().querySelector("img")
     img.src = "https://t0.gstatic.com/faviconV2?client=SOCIAL&type=FAVICON&fallback_opts=TYPE,SIZE,URL&url="+url+"&size=64";
-
     ts.getActiveTab().getConnectedElement().querySelector("#newtitle").remove();
-    var iframe = ts.getActiveTab().getTabElement().querySelector("#browseriframe");
-    function changeTitle() {
+    ts.getActiveTab().findFirstIFrame().onload = () => {
+      var iframe = ts.getActiveTab().getTabElement().querySelector("#browseriframe");
       var title = document.createElement("label");
       title.id = "newtitle";
       var originalTitle = iframe.contentDocument.title;
       var truncatedTitle = originalTitle.length > 7 ? originalTitle.substring(0, 7) + "..." : originalTitle;
-      title.textContent = truncatedTitle;
-      ts.getActiveTab().getConnectedElement().querySelector("#original").parentNode.appendChild(title);
+      if (truncatedTitle == undefined || truncatedTitle == null || truncatedTitle == "" || truncatedTitle.trim() == "") {
+        title.textContent = "Untitled";
     }
-    iframe.onload = changeTitle;
+    else {
+        title.textContent = truncatedTitle;
+    }
+      ts.getActiveTab().getConnectedElement().querySelector("#original").parentNode.appendChild(title);
+    };
     } else {
     ts.setActiveTab(ts.addTab(new Tab(ts.createTabBtn(), ts.createTabFrame())));
     runService(url);
