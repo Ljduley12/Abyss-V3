@@ -184,15 +184,26 @@ async function runService(URL) {
     var img = document.createElement("img");
     img.src = "https://t0.gstatic.com/faviconV2?client=SOCIAL&type=FAVICON&fallback_opts=TYPE,SIZE,URL&url="+url+"&size=64";
     ts.getActiveTab().getConnectedElement().querySelector("svg").parentNode.appendChild(img);
+    ts.getActiveTab().getConnectedElement().querySelector("label").style.display = "none";
+    var title = document.createElement("label");
+    title.style.fontSize = "20px";
+    title.style.top = "-4px";
+    var iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
+        iframe.contentWindow.onload = function(){
+          var originalTitle = iframe.contentWindow.document.title;
+          var truncatedTitle = originalTitle.length > 7 ? originalTitle.substring(0, 7) + "..." : originalTitle;
+          title.textContent = truncatedTitle;
+        };
+    ts.getActiveTab().getConnectedElement().querySelector("label").parentNode.appendChild(title);
     fetch("/service/route?url=" + encodeURIComponent(url))
         .then((res) => res.text())
         .then((html) => {
           var parser = new DOMParser();
           var doc = parser.parseFromString(html, "text/html");
           console.log("%cDEV:%c" + doc, "font-weight: bold", "font-weight: normal");
-          var title = doc.querySelector("title").innerText;
-          ts.getActiveTab().getConnectedElement().querySelector("svg").parentNode.parentNode.querySelector("label").innerText = title;
+          ts.getActiveTab().getConnectedElement().querySelector("svg");
         });
+
     document.getElementById("adrbar").value = "";
   } else if (
     ts.getActiveTab() != null &&
