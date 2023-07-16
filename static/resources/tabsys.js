@@ -32,6 +32,7 @@ class TabSystem {
       btnTemplate: document.getElementById("temp-tab"),
       tabBtnContainer: document.getElementById("TabsBar"),
       URLBarVal: document.getElementById("adrbar").value,
+      URLBar: document.getElementById("adrbar"),
       tabActiveColor: "#484848",
       tabInactiveColor: "#444444d2",
       defaultPlaceholder: "Starting Page (abyss://newtab)",

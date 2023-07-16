@@ -183,24 +183,28 @@ async function runService(URL) {
     ts.getActiveTab().getTabElement().appendChild(iframe);
     ts.getActiveTab().getConnectedElement().querySelector("svg").style.display = "none";
     var img = document.createElement("img");
-    img.src = "https://t0.gstatic.com/faviconV2?client=SOCIAL&type=FAVICON&fallback_opts=TYPE,SIZE,URL&url="+url+"&size=64";
     ts.getActiveTab().getConnectedElement().querySelector("svg").parentNode.appendChild(img);
     ts.getActiveTab().getConnectedElement().querySelector("#original").style.display = "none";
+    img.src = "https://t0.gstatic.com/faviconV2?client=SOCIAL&type=FAVICON&fallback_opts=TYPE,SIZE,URL&url=" + url + "&size=64";
     ts.getActiveTab().findFirstIFrame().onload = () => {
+      if (ts.getActiveTab().getConnectedElement().querySelector("#newtitle")) ts.getActiveTab().getConnectedElement().querySelector("#newtitle").remove();
+      document.getElementById("adrbar").placeholder = url;
       var iframe = ts.getActiveTab().getTabElement().querySelector("#browseriframe");
       var title = document.createElement("label");
       title.id = "newtitle";
-      var originalTitle = iframe.contentDocument.title;
-      var truncatedTitle = originalTitle.length > 7 ? originalTitle.substring(0, 7) + "..." : originalTitle;
-      if (truncatedTitle == undefined || truncatedTitle == null || truncatedTitle == "" || truncatedTitle.trim() == "") {
+      title.class = "newTitle";
+      // var originalTitle = iframe.contentDocument.title;
+        // var truncatedTitle = originalTitle.length > 7 ? originalTitle.substring(0, 7) + "..." : originalTitle;
+        // title.textContent = truncatedTitle;
+        if (iframe.contentDocument.title == null || iframe.contentDocument.title == undefined || iframe.contentDocument.title.trim() == "") {
           title.textContent = "Untitled";
-      }
-      else {
-          title.textContent = truncatedTitle;
-      }
+        } else {
+          title.textContent = iframe.contentDocument.title;
+        }
+      img.src = "https://t0.gstatic.com/faviconV2?client=SOCIAL&type=FAVICON&fallback_opts=TYPE,SIZE,URL&url=" + iframe.contentDocument.querySelector('link[rel="icon"]').href + "&size=64";
+      document.getElementById("adrbar").placeholder = title.textContent;
       ts.getActiveTab().getConnectedElement().querySelector("#original").parentNode.appendChild(title);
     };
-    ts.getActiveTab().getConnectedElement().querySelector("#original").parentNode.appendChild(title);
     document.getElementById("adrbar").value = "";
   } else if (
     ts.getActiveTab() != null &&
@@ -208,25 +212,12 @@ async function runService(URL) {
   ) {
     ts.getActiveTab().findFirstIFrame().src = "/service/route?url=" + encodeURIComponent(url);
     document.getElementById("adrbar").value = "";
-
-    var img = ts.getActiveTab().getConnectedElement().querySelector("img")
-    img.src = "https://t0.gstatic.com/faviconV2?client=SOCIAL&type=FAVICON&fallback_opts=TYPE,SIZE,URL&url="+url+"&size=64";
-    ts.getActiveTab().getConnectedElement().querySelector("#newtitle").remove();
-    ts.getActiveTab().findFirstIFrame().onload = () => {
-      var iframe = ts.getActiveTab().getTabElement().querySelector("#browseriframe");
-      var title = document.createElement("label");
-      title.id = "newtitle";
-      var originalTitle = iframe.contentDocument.title;
-      var truncatedTitle = originalTitle.length > 7 ? originalTitle.substring(0, 7) + "..." : originalTitle;
-      if (truncatedTitle == undefined || truncatedTitle == null || truncatedTitle == "" || truncatedTitle.trim() == "") {
-        title.textContent = "Untitled";
-    }
-    else {
-        title.textContent = truncatedTitle;
-    }
-      ts.getActiveTab().getConnectedElement().querySelector("#original").parentNode.appendChild(title);
-    };
-    } else {
+    var iframe = ts.getActiveTab().getTabElement().querySelector("#browseriframe");
+    img.src = "https://t0.gstatic.com/faviconV2?client=SOCIAL&type=FAVICON&fallback_opts=TYPE,SIZE,URL&url=" + iframe.contentDocument.querySelector('link[rel="icon"]').href + "&size=64";
+    // this works just fine ....  // not for google searching it wont hmm let me see  it works just fine
+    // iframe.contentDocument.querySelector('link[rel="icon"]').href; 
+    // it w
+  } else {
     ts.setActiveTab(ts.addTab(new Tab(ts.createTabBtn(), ts.createTabFrame())));
     runService(url);
   }
@@ -300,19 +291,23 @@ function back() {
   if (ts.getActiveTab() != null) {
     if (ts.getActiveTab().findFirstIFrame() != null) {
       ts.getActiveTab().findFirstIFrame().contentWindow.history.back();
-    var img = ts.getActiveTab().getConnectedElement().querySelector("img")
-    var iframe = ts.getActiveTab().getTabElement().querySelector("#browseriframe");
-    function changeTitle() {
-      ts.getActiveTab().getConnectedElement().querySelector("#newtitle").remove();
-      var title = document.createElement("label");
-      title.id = "newtitle";
-      var originalTitle = iframe.contentDocument.title;
-      var truncatedTitle = originalTitle.length > 7 ? originalTitle.substring(0, 7) + "..." : originalTitle;
-      title.textContent = truncatedTitle;
-      ts.getActiveTab().getConnectedElement().querySelector("#original").parentNode.appendChild(title);
-      img.src = iframe.contentDocument.querySelector('link[rel="icon"]').href;
-    }
-    iframe.onload = changeTitle;
+      var img = ts.getActiveTab().getConnectedElement().querySelector("img")
+      var iframe = ts.getActiveTab().getTabElement().querySelector("#browseriframe");
+      function changeTitle() {
+        ts.getActiveTab().getConnectedElement().querySelector("#newtitle").remove();
+        var title = document.createElement("label");
+        title.id = "newtitle";
+        title.class = "newTitle";
+        // var originalTitle = iframe.contentDocument.title;
+        // var truncatedTitle = originalTitle.length > 7 ? originalTitle.substring(0, 7) + "..." : originalTitle;
+        // title.textContent = truncatedTitle;
+        title.textContent = iframe.contentDocument.title;
+        ts.getActiveTab().getConnectedElement().querySelector("#original").parentNode.appendChild(title);
+        img.src = "https://t0.gstatic.com/faviconV2?client=SOCIAL&type=FAVICON&fallback_opts=TYPE,SIZE,URL&url=" + iframe.contentDocument.querySelector('link[rel="icon"]').href + "&size=64";
+        // img.src = "https://t0.gstatic.com/faviconV2?client=SOCIAL&type=FAVICON&fallback_opts=TYPE,SIZE,URL&url=" + iframe.contentWindow.location.href + "&size=64";
+        // iframe.contentDocument.querySelector('link[rel="icon"]').href;
+      }
+      iframe.onload = changeTitle;
     }
   }
 }
@@ -327,11 +322,15 @@ function forwards() {
         ts.getActiveTab().getConnectedElement().querySelector("#newtitle").remove();
         var title = document.createElement("label");
         title.id = "newtitle";
-        var originalTitle = iframe.contentDocument.title;
-        var truncatedTitle = originalTitle.length > 7 ? originalTitle.substring(0, 7) + "..." : originalTitle;
-        title.textContent = truncatedTitle;
+        title.class = "newTitle";
+        // var originalTitle = iframe.contentDocument.title;
+        // var truncatedTitle = originalTitle.length > 7 ? originalTitle.substring(0, 7) + "..." : originalTitle;
+        // title.textContent = truncatedTitle;
+        title.textContent = iframe.contentDocument.title;
         ts.getActiveTab().getConnectedElement().querySelector("#original").parentNode.appendChild(title);
-        img.src = iframe.contentDocument.querySelector('link[rel="icon"]').href;
+        img.src = "https://t0.gstatic.com/faviconV2?client=SOCIAL&type=FAVICON&fallback_opts=TYPE,SIZE,URL&url=" + iframe.contentDocument.querySelector('link[rel="icon"]').href + "&size=64";
+        // img.src = "https://t0.gstatic.com/faviconV2?client=SOCIAL&type=FAVICON&fallback_opts=TYPE,SIZE,URL&url=" + iframe.contentWindow.location.href + "&size=64";
+        // iframe.contentDocument.querySelector('link[rel="icon"]').href;
       }
       iframe.onload = changeTitle;
     }
@@ -355,7 +354,7 @@ function opPO() {
       // ts.getActiveTab().findFirstIFrame().src = window.location.host + ts.getActiveTab().findFirstIFrame().src;
       const frame = document.createElement("iframe");
       frame.src = ts.getActiveTab().findFirstIFrame().src;
-      win.document.body.appendChild(frame); 
+      win.document.body.appendChild(frame);
       ts.deleteTab(ts.getActiveTab(), true);
       frame.style.cssText = "margin: 0; padding: 0; overflow: hidden; width: 100%; height: 100%; position: absolute; top: 0; left: 0; z-index: 1000000; border: none; border-radius: 0;";
     }
@@ -379,12 +378,36 @@ function opST() {
   if (ts.getActiveTab() == null) {
     ts.setActiveTab(ts.addTab(new Tab(ts.createTabBtn(), ts.createTabFrame())));
   }
+  if (ts.getActiveTab().getConnectedElement().querySelector("#newtitle")) {
+    ts.getActiveTab().getConnectedElement().querySelector("#newtitle").remove();
+    ts.getActiveTab().getConnectedElement().querySelector("#original").style.display = "initial";
+    ts.getActiveTab().getConnectedElement().querySelector("#original").textContent = "Settings";
+  } else {
+    ts.getActiveTab().getConnectedElement().querySelector("#original").textContent = "Settings";
+  }
+  if (ts.getActiveTab().getConnectedElement().querySelector("img")) {
+    ts.getActiveTab().getConnectedElement().querySelector("img").remove();
+    ts.getActiveTab().getConnectedElement().querySelector("svg").style.display = "initial";
+  } else {
+  }
   runService("abyss://settings");
 }
 
 function about() {
   if (ts.getActiveTab() == null) {
     ts.setActiveTab(ts.addTab(new Tab(ts.createTabBtn(), ts.createTabFrame())));
+  }
+  if (ts.getActiveTab().getConnectedElement().querySelector("#newtitle")) {
+    ts.getActiveTab().getConnectedElement().querySelector("#newtitle").remove();
+    ts.getActiveTab().getConnectedElement().querySelector("#original").style.display = "initial";
+    ts.getActiveTab().getConnectedElement().querySelector("#original").textContent = "About";
+  } else {
+    ts.getActiveTab().getConnectedElement().querySelector("#original").textContent = "About";
+  }
+  if (ts.getActiveTab().getConnectedElement().querySelector("img")) {
+    ts.getActiveTab().getConnectedElement().querySelector("img").remove();
+    ts.getActiveTab().getConnectedElement().querySelector("svg").style.display = "initial";
+  } else {
   }
   runService("abyss://about");
 }
@@ -499,7 +522,7 @@ function log() {
   setTimeout(
     console.log.bind(
       console,
-      `%c Information: \n Online: ${online} \n URL: ${diagnosticDomain} \n Browser: ${browserName} \n UA: ${userAgent}`, 
+      `%c Information: \n Online: ${online} \n URL: ${diagnosticDomain} \n Browser: ${browserName} \n UA: ${userAgent}`,
       "background: grey;color:white;padding:5px;line-height: 26px; border-radius: 5px;font-size:12px;"
     )
   )
